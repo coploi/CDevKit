@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CDevKit — Documentation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500&family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --transition: 0.2s ease;
+  }
+  [data-theme="dark"] {
+    --bg:           #1E1E1E;
+    --bg-sidebar:   #252525;
+    --bg-card:      #252525;
+    --bg-code:      #1a1a1a;
+    --border:       #333333;
+    --text:         #DDDDDD;
+    --text-muted:   #888888;
+    --text-dim:     #555555;
+    --accent:       #EEEEEE;
+    --accent-hover: #FFFFFF;
+    --nav-active-bg:#333333;
+    --nav-hover-bg: #2E2E2E;
+    --tag-bg:       #2a2a2a;
+    --tag-border:   #3a3a3a;
+    --scrollbar:    #3a3a3a;
+    --logo-border:  #333333;
+    --badge-bg:     #2a2a2a;
+    --badge-color:  #888;
+    --pill-bg:      #333;
+    --pill-text:    #ccc;
+  }
+  [data-theme="light"] {
+    --bg:           #FFFFFF;
+    --bg-sidebar:   #ECECEA;
+    --bg-card:      #F9F9F8;
+    --bg-code:      #F3F3F1;
+    --border:       #E8E8E6;
+    --text:         #111111;
+    --text-muted:   #666666;
+    --text-dim:     #AAAAAA;
+    --accent:       #111111;
+    --accent-hover: #333333;
+    --nav-active-bg:#FFFFFF;
+    --nav-hover-bg: #E0DFD8;
+    --tag-bg:       #F0F0EE;
+    --tag-border:   #E0E0DE;
+    --scrollbar:    #C0BFBC;
+    --logo-border:  #D8D7D4;
+    --badge-bg:     #f0f0ee;
+    --badge-color:  #999;
+    --pill-bg:      #e8e8e6;
+    --pill-text:    #555;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { height: 100%; }
+  body {
+    font-family: 'Sora', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    transition: background var(--transition), color var(--transition);
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--scrollbar); border-radius: 2px; }
+
+  .topbar {
+    height: 52px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    background: var(--bg);
+    transition: background var(--transition), border-color var(--transition);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .topbar-logo {
+    width: 220px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: flex-end;
+    gap: 4px;
+    padding: 0 24px;
+    border-right: 1px solid var(--logo-border);
+    height: 100%;
+    background: var(--bg-sidebar);
+    transition: background var(--transition), border-color var(--transition);
+  }
+  .topbar-logo .name {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1;
+    padding-bottom: 10px;
+  }
+  .topbar-logo .ver {
+    font-size: 9px;
+    color: var(--text-dim);
+    font-family: 'Geist Mono', monospace;
+    padding-bottom: 11px;
+  }
+  .topbar-title {
+    flex: 1;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .topbar-actions {
+    width: 220px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding-right: 24px;
+    gap: 8px;
+  }
+  .theme-toggle {
+    display: flex;
+    background: var(--tag-bg);
+    border: 1px solid var(--tag-border);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: background var(--transition), border-color var(--transition);
+  }
+  .theme-toggle button {
+    background: transparent;
+    border: none;
+    padding: 5px 12px;
+    font-size: 12px;
+    font-family: 'Sora', sans-serif;
+    cursor: pointer;
+    color: var(--text-muted);
+    transition: background var(--transition), color var(--transition);
+    border-radius: 6px;
+  }
+  .theme-toggle button.active {
+    background: var(--accent);
+    color: var(--bg);
+    font-weight: 600;
+  }
+
+  .layout {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  .sidebar {
+    width: 220px;
+    flex-shrink: 0;
+    background: var(--bg-sidebar);
+    border-right: 1px solid var(--border);
+    overflow-y: auto;
+    padding: 16px 0 24px;
+    transition: background var(--transition), border-color var(--transition);
+  }
+  .sidebar-section {
+    margin-bottom: 4px;
+  }
+  .sidebar-heading {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    color: var(--text);
+    padding: 10px 16px 4px;
+    text-transform: uppercase;
+  }
+  .nav-btn {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    background: transparent;
+    border: none;
+    padding: 0 16px;
+    height: 30px;
+    font-size: 13px;
+    font-family: 'Sora', sans-serif;
+    color: var(--text-muted);
+    cursor: pointer;
+    text-align: left;
+    border-radius: 6px;
+    transition: background var(--transition), color var(--transition);
+    gap: 8px;
+  }
+  .nav-btn:hover { background: var(--nav-hover-bg); color: var(--text); }
+  .nav-btn.active { background: var(--nav-active-bg); color: var(--text); font-weight: 600; }
+  .nav-sub {
+    padding-left: 12px;
+    display: none;
+    border-left: 2px solid var(--border);
+    margin-left: 16px;
+    margin-top: 2px;
+    margin-bottom: 2px;
+  }
+  .nav-sub.open { display: block; }
+  .nav-sub .nav-btn {
+    font-size: 12px;
+    height: 28px;
+    color: var(--text-dim);
+    padding-left: 12px;
+  }
+  .nav-sub .nav-btn:hover { color: var(--text-muted); }
+  .nav-sub .nav-btn.active { color: var(--text); }
+
+  .content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 40px 48px;
+  }
+
+  .page { display: none; }
+  .page.active { display: block; }
+
+  h1 {
+    font-size: 26px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    line-height: 1.2;
+  }
+  h2 {
+    font-size: 17px;
+    font-weight: 700;
+    margin: 36px 0 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+    transition: border-color var(--transition);
+  }
+  h3 {
+    font-size: 14px;
+    font-weight: 600;
+    margin: 24px 0 8px;
+    color: var(--text);
+  }
+  p { color: var(--text-muted); margin-bottom: 14px; line-height: 1.7; }
+  a { color: var(--text); text-decoration: underline; text-underline-offset: 3px; }
+  a:hover { color: var(--text-muted); }
+
+  .page-lead {
+    color: var(--text-muted);
+    font-size: 14px;
+    margin-bottom: 32px;
+    line-height: 1.;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 24px;
+    transition: border-color var(--transition);
+  }
+
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px 24px;
+    margin-bottom: 16px;
+    transition: background var(--transition), border-color var(--transition);
+  }
+  .card-title {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: var(--text);
+  }
+  .card p { margin-bottom: 0; font-size: 13px; }
+
+  .steps { list-style: none; counter-reset: steps; }
+  .steps li {
+    counter-increment: steps;
+    display: flex;
+    gap: 14px;
+    margin-bottom: 20px;
+    align-items: flex-start;
+  }
+  .steps li::before {
+    content: counter(steps);
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    border-radius: 6px;
+    background: var(--tag-bg);
+    border: 1px solid var(--tag-border);
+    font-size: 11px;
+    font-weight: 700;
+    font-family: 'Geist Mono', monospace;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    margin-top: 1px;
+  }
+  .steps li .step-body { flex: 1; }
+  .steps li .step-title { font-size: 13px; font-weight: 600; margin-bottom: 4px; color: var(--text); }
+  .steps li p { font-size: 13px; margin-bottom: 0; }
+
+  pre {
+    background: var(--bg-code);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 18px;
+    margin: 12px 0 20px;
+    overflow-x: auto;
+    transition: background var(--transition), border-color var(--transition);
+  }
+  code {
+    font-family: 'Geist Mono', monospace;
+    font-size: 12px;
+    color: var(--text);
+    line-height: 1.6;
+  }
+  p code, li code {
+    background: var(--tag-bg);
+    border: 1px solid var(--tag-border);
+    border-radius: 4px;
+    padding: 1px 6px;
+    font-size: 11px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0 24px;
+    font-size: 13px;
+  }
+  th {
+    text-align: left;
+    padding: 8px 14px;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border);
+    transition: border-color var(--transition);
+  }
+  td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-muted);
+    transition: border-color var(--transition);
+  }
+  td:first-child { color: var(--text); font-family: 'Geist Mono', monospace; font-size: 12px; }
+  tr:last-child td { border-bottom: none; }
+
+  .pill {
+    display: inline-block;
+    background: var(--pill-bg);
+    color: var(--pill-text);
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-size: 10px;
+    font-weight: 600;
+    font-family: 'Geist Mono', monospace;
+    margin-left: 6px;
+    vertical-align: middle;
+    transition: background var(--transition), color var(--transition);
+  }
+  .pill.green { background: #1a3a1a; color: #4CAF50; }
+  .pill.orange { background: #3a2a1a; color: #FFA040; }
+  [data-theme="light"] .pill.green { background: #e8f5e9; color: #2e7d32; }
+  [data-theme="light"] .pill.orange { background: #fff3e0; color: #e65100; }
+
+  .download-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--accent);
+    color: var(--bg);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 12px 20px;
+    border-radius: 8px;
+    margin-bottom: 0px;
+    transition: opacity var(--transition), transform var(--transition);
+    border: none;
+    cursor: pointer;
+    font-family: 'Sora', sans-serif;
+  }
+  .download-btn:hover:not(:disabled) { opacity: 0.85; color: var(--bg); transform: translateY(-1px); }
+  .download-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+  .download-btn-badge {
+    font-size: 10px;
+    font-family: 'Geist Mono', monospace;
+    font-weight: 600;
+    background: rgba(255,255,255,0.18);
+    border-radius: 4px;
+    padding: 2px 7px;
+    letter-spacing: 0.04em;
+  }
+
+  .notice {
+    background: var(--tag-bg);
+    border: 1px solid var(--tag-border);
+    border-left: 3px solid var(--text-dim);
+    border-radius: 6px;
+    padding: 12px 16px;
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 0px;
+    transition: all var(--transition);
+  }
+
+  .app-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+    transition: border-color var(--transition);
+  }
+  .app-row:last-child { border-bottom: none; }
+  .app-icon { font-size: 18px; flex-shrink: 0; width: 28px; text-align: center; }
+  .app-info { flex: 1; }
+  .app-name { font-size: 13px; font-weight: 600; color: var(--text); }
+  .app-desc { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+  .app-status { flex-shrink: 0; }
+
+  .footer {
+    flex-shrink: 0;
+    border-top: 1px solid var(--border);
+    background: var(--bg-sidebar);
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: background var(--transition), border-color var(--transition);
+  }
+  .footer-left {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-family: 'Geist Mono', monospace;
+    color: var(--text-dim);
+  }
+  .footer-left .footer-name {
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+  .footer-socials {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .footer-social-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 5px 10px;
+    font-size: 11px;
+    font-family: 'Sora', sans-serif;
+    font-weight: 500;
+    color: var(--text-muted);
+    cursor: pointer;
+    text-decoration: none;
+    transition: background var(--transition), color var(--transition), border-color var(--transition);
+  }
+  .footer-social-btn:hover {
+    background: var(--nav-hover-bg);
+    color: var(--text);
+    border-color: var(--text-dim);
+  }
+  .footer-social-btn svg {
+    flex-shrink: 0;
+    opacity: 0.7;
+  }
+  .footer-social-btn:hover svg { opacity: 1; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-logo">
+    <span class="name">CDevKit</span>
+    <span class="ver"></span>
+  </div>
+  <div class="topbar-title" id="topbar-title">Getting Started</div>
+  <div class="topbar-actions">
+    <div class="theme-toggle">
+      <button onclick="setTheme('light')" id="btn-light">Light</button>
+      <button onclick="setTheme('dark')"  id="btn-dark" class="active">Dark</button>
+    </div>
+  </div>
+</div>
+
+<div class="layout">
+  <nav class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-heading">General</div>
+      <button class="nav-btn active" onclick="nav(this,'getting-started','Getting Started')">Getting Started</button>
+      <button class="nav-btn"        onclick="nav(this,'apps','Apps')">Apps</button>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-heading">Docs</div>
+      <button class="nav-btn" onclick="navParent(this,'roblox','Roblox','roblox-children')">Roblox</button>
+      <div class="nav-sub" id="roblox-children">
+        <button class="nav-btn" onclick="nav(this,'roblox-datastore','Datastore')">Datastore</button>
+        <button class="nav-btn" onclick="nav(this,'roblox-messages','Messages')">Messages</button>
+        <button class="nav-btn" onclick="nav(this,'roblox-places','Places')">Places</button>
+        <button class="nav-btn" onclick="nav(this,'roblox-opencloud','Open Cloud')">Open Cloud</button>
+        <button class="nav-btn" onclick="nav(this,'roblox-files','Files')">Files</button>
+        <button class="nav-btn" onclick="nav(this,'roblox-plugins','Plugins')">Plugins</button>
+        <button class="nav-btn" onclick="nav(this,'roblox-devforum','Devforum')">Devforum</button>
+      </div>
+      <button class="nav-btn" onclick="navParent(this,'discord','Discord','discord-children')">Discord</button>
+      <div class="nav-sub" id="discord-children">
+        <button class="nav-btn" onclick="nav(this,'discord-commands','Commands')">Commands</button>
+        <button class="nav-btn" onclick="nav(this,'discord-logs','Logs')">Logs</button>
+        <button class="nav-btn" onclick="nav(this,'discord-settings','Settings')">Settings</button>
+      </div>
+      <button class="nav-btn" onclick="nav(this,'web','Web Server')">Web Server</button>
+      <button class="nav-btn" onclick="nav(this,'console','Console')">Console</button>
+    </div>
+  </nav>
+
+  <main class="content">
+    <div class="page active" id="page-getting-started">
+      <h1>Getting Started</h1>
+      <p class="page-lead">CDevKit is a desktop toolkit for developers working with game engines, such as Roblox, Unity or Unreal Engine, Discord bots, local web servers, and more — all from a single unified interface. It runs entirely on your machine. There's no cloud account, no subscription, and no telemetry. Just download the installer and run it.</p>
+
+      <button class="download-btn" onclick="downloadLatest(this)">
+        <svg id="dl-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        <span id="dl-label">Download CDevKit</span>
+        <span class="download-btn-badge" id="dl-badge">Latest Release</span>
+      </button>
+
+      <h2>Installation</h2>
+      <ul class="steps">
+        <li>
+          <div class="step-body">
+            <div class="step-title">Download the installer</div>
+            <p>Click the <strong>Download CDevKit</strong> button above to download the installer.</p>
+          </div>
+        </li>
+        <li>
+          <div class="step-body">
+            <div class="step-title">Run the installer</div>
+            <p>Open the downloaded installer and follow the on-screen steps. It will automatically set up CDevKit and place all files in the right folders for you.</p>
+          </div>
+        </li>
+        <li>
+          <div class="step-body">
+            <div class="step-title">Launch CDevKit</div>
+            <p>Once installed, open CDevKit using the desktop shortcut. You can also run <code>CDevKit.exe</code> directly from the install directory if preferred.</p>
+            <p>Head to the <strong>Apps</strong> page to enable the integrations you want to use. Have fun!</p>
+          </div>
+        </li>
+      </ul>
+
+            <h2>Requirements</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Requirement</th>
+            <th>Details</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Python</td>
+            <td>3.10 or newer &nbsp;<span class="pill">Required</span><span class="pill green">This should download automatically</span></td>
+          </tr>
+          <tr>
+            <td>Operating System</td>
+            <td>Windows 10/11, macOS 12+, or Linux (Ubuntu 20.04+) &nbsp;<span class="pill orange">Some features may be unavailable or not work properly on Linux</span></td>
+          </tr>
+          <tr>
+            <td>Storage</td>
+            <td>~100 MB for the app and dependencies</td>
+          </tr>
+          <tr>
+            <td>Internet</td>
+            <td>Required for API features (Open Cloud, Discord)</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="notice">If the app fails to launch, make sure you have Python 3.10 or newer installed and added to your system PATH. Dependencies are downloaded automatically on first run.</div>
+
+    </div>
+
+    <div class="page" id="page-apps">
+      <h1>Apps</h1>
+      <p class="page-lead">The Apps page lets you enable or disable integrations. Only enabled apps appear in the sidebar, keeping the interface clean and focused on what you actually use.</p>
+
+      <h2>Available Integrations</h2>
+      <div class="card">
+        <div class="app-row">
+          <div class="app-icon"><img src="https://coploi.github.io/CDevKit-docs/Roblox.png" width="24" height="24"></div>
+          <div class="app-info">
+            <div class="app-name">Roblox</div>
+            <div class="app-desc">DataStore, Messaging, Places &amp; Open Cloud APIs</div>
+          </div>
+          <div class="app-status"><span class="pill green">Available</span></div>
+        </div>
+         <div class="app-row">
+          <div class="app-icon"><img src="https://coploi.github.io/CDevKit-docs/Unity.png" width="24" height="24"></div>
+          <div class="app-info">
+            <div class="app-name">Unity</div>
+            <div class="app-desc">Asset management, build tools &amp; editor hooks</div>
+          </div>
+          <div class="app-status"><span class="pill orange">Coming Soon</span></div>
+        </div>
+        <div class="app-row">
+          <div class="app-icon"><img src="https://coploi.github.io/CDevKit-docs/UE.png" width="24" height="24"></div>
+          <div class="app-info">
+            <div class="app-name">Unreal Engine</div>
+            <div class="app-desc">Blueprint utilities, UGS &amp; cloud build support</div>
+          </div>
+          <div class="app-status"><span class="pill orange">Coming Soon</span></div>
+        </div>
+        <div class="app-row">
+          <div class="app-icon"><img src="https://coploi.github.io/CDevKit-docs/Discord.png" width="24" height="24"></div>
+          <div class="app-info">
+            <div class="app-name">Discord</div>
+            <div class="app-desc">Bot commands, settings &amp; log viewer</div>
+          </div>
+          <div class="app-status"><span class="pill green">Available</span></div>
+        </div>
+        <div class="app-row">
+          <div class="app-icon"><img src="https://coploi.github.io/CDevKit-docs/Git.png" width="24" height="24"></div>
+          <div class="app-info">
+            <div class="app-name">GitHub</div>
+            <div class="app-desc">Repo info, commit history &amp; release helpers</div>
+          </div>
+          <div class="app-status"><span class="pill green">Available</span></div>
+        </div>
+      </div>
+
+      <h2>Toggling Apps</h2>
+      <p>Each available integration has a toggle on the Apps page. Enabling an app immediately adds its tabs to the sidebar — no restart required. Disabling removes them.</p>
+      <div class="notice">Coming Soon apps are greyed out and cannot be toggled. They will become available in a future release.</div>
+    </div>
+
+    <div class="page" id="page-roblox">
+      <h1>Roblox — Api's</h1>
+      <p class="page-lead">The Roblox integration gives you direct access to Open Cloud APIs — DataStore, Messaging, Places, and more — without leaving your dev environment.</p>
+    </div>
+
+    <div class="page" id="page-roblox-datastore">
+      <h1>Datastore</h1>
+      <p class="page-lead">Read, write, and manage Roblox DataStore entries via the Open Cloud API.</p>
+    </div>
+
+    <div class="page" id="page-roblox-messages">
+      <h1>Messages</h1>
+      <p class="page-lead">Publish and subscribe to cross-server messages using the Messaging Service API.</p>
+    </div>
+
+    <div class="page" id="page-roblox-places">
+      <h1>Places</h1>
+      <p class="page-lead">Manage place versions, publish updates, and inspect place metadata.</p>
+    </div>
+
+    <div class="page" id="page-roblox-opencloud">
+      <h1>Open Cloud</h1>
+      <p class="page-lead">A general interface for any Open Cloud API endpoint not covered by a dedicated tab.</p>
+    </div>
+
+    <div class="page" id="page-roblox-files">
+      <h1>Files</h1>
+      <p class="page-lead">Browse and manage assets uploaded to your Roblox account.</p>
+    </div>
+
+    <div class="page" id="page-roblox-plugins">
+      <h1>Plugins</h1>
+      <p class="page-lead">View and manage your published Roblox Studio plugins.</p>
+    </div>
+
+    <div class="page" id="page-roblox-devforum">
+      <h1>Devforum</h1>
+      <p class="page-lead">Quick links and resources from the Roblox Developer Forum.</p>
+    </div>
+
+    <div class="page" id="page-discord">
+      <h1>Discord — Bots</h1>
+      <p class="page-lead">The Discord integration provides a management panel for your bots — configure commands, view settings, and monitor logs in real time.</p>
+    </div>
+
+    <div class="page" id="page-discord-commands">
+      <h1>Commands</h1>
+      <p class="page-lead">Register, edit, and delete slash commands for your Discord bot.</p>
+    </div>
+
+    <div class="page" id="page-discord-logs">
+      <h1>Logs</h1>
+      <p class="page-lead">Live log viewer for your bot's stdout and stderr output.</p>
+    </div>
+
+    <div class="page" id="page-discord-settings">
+      <h1>Settings</h1>
+      <p class="page-lead">Configure your bot token, prefix, intents, and other options.</p>
+    </div>
+
+    <div class="page" id="page-web">
+      <h1>Web Server</h1>
+      <p class="page-lead">CDevKit runs a local Flask server you can use for dev dashboards, webhook testing, or serving tools to other devices on your network.</p>
+    </div>
+
+    <div class="page" id="page-console">
+      <h1>Console</h1>
+      <p class="page-lead">The Console page captures all <code>stdout</code> and <code>stderr</code> output from the CDevKit process and displays it in a timestamped, colour-coded log viewer.</p>
+
+      <h2>Controls</h2>
+      <p>The <strong>Clear</strong> button wipes the log display and resets the entry counter. A system message is appended after clearing to confirm the action.</p>
+
+      <h2>How it works</h2>
+      <p>On startup, <code>sys.stdout</code> and <code>sys.stderr</code> are replaced with <code>ConsoleStream</code> wrappers that emit a Qt signal for each line. The signal is connected to the log widget's append method, making it thread-safe to print from background threads (e.g. the Flask server thread).</p>
+
+      <pre><code># Any print() call anywhere in the app appears here
+print("Hello from CDevKit")       # → info level
+print("Something broke", file=sys.stderr)  # → error level</code></pre>
+    </div>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-left">
+    <span class="footer-name">CDevKit</span>
+    <span>·</span>
+    <span>v1.0.0</span>
+  </div>
+  <div class="footer-socials">
+    <a href="#" class="footer-social-btn" title="GitHub">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+      GitHub
+    </a>
+    <a href="https://discord.gg/5JWGvDwWWQ" class="footer-social-btn" title="Discord">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057c.002.022.015.043.03.056a19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>
+      Discord
+    </a>
+    <a href="https://www.youtube.com/@coploi" class="footer-social-btn" title="YouTube">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+      YouTube
+    </a>
+    <a href="https://www.roblox.com/communities/1102738537/CGArchive" class="footer-social-btn" title="Roblox Group">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M4.597 0L0 19.403 19.397 24 24 4.597zm10.692 13.86l-5.128-1.323 1.323-5.128 5.128 1.323z"/></svg>
+      Roblox Group
+    </a>
+  </div>
+</footer>
+
+<script>
+  async function downloadLatest(btn) {
+    const label = document.getElementById('dl-label');
+    const badge = document.getElementById('dl-badge');
+    btn.disabled = true;
+    label.textContent = 'Fetching release…';
+    badge.textContent = '...';
+
+    try {
+      const res = await fetch('https://api.github.com/repos/coploi/CDevKit/releases/latest');
+      if (!res.ok) throw new Error('GitHub API error');
+      const data = await res.json();
+
+      const asset = data.assets.find(a => a.name.endsWith('.exe'));
+      if (!asset) throw new Error('No .exe found in latest release');
+
+      badge.textContent = data.tag_name;
+      label.textContent = 'Downloading…';
+
+      const a = document.createElement('a');
+      a.href = asset.browser_download_url;
+      a.download = asset.name;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+
+      label.textContent = 'Download CDevKit';
+      btn.disabled = false;
+    } catch (err) {
+      label.textContent = 'Download failed';
+      badge.textContent = '!';
+      btn.disabled = false;
+      setTimeout(() => {
+        label.textContent = 'Download CDevKit';
+        badge.textContent = 'Latest Release';
+      }, 3000);
+    }
+  }
+
+  function nav(btn, pageId, title) {
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+    const parentSub = btn && btn.closest('.nav-sub');
+    if (parentSub) {
+      const parentBtn = parentSub.previousElementSibling;
+      if (parentBtn && parentBtn.classList.contains('nav-btn')) {
+        parentBtn.classList.add('active');
+      }
+    }
+    const page = document.getElementById('page-' + pageId);
+    if (page) page.classList.add('active');
+    document.getElementById('topbar-title').textContent = title;
+  }
+
+  function navParent(btn, pageId, title, childrenId) {
+    const children = document.getElementById(childrenId);
+    const isOpen = children.classList.contains('open');
+    if (!isOpen) {
+      children.classList.add('open');
+    } else {
+      children.classList.remove('open');
+    }
+    nav(btn, pageId, title);
+  }
+
+  function setTheme(t) {
+    document.documentElement.setAttribute('data-theme', t);
+    document.getElementById('btn-light').classList.toggle('active', t === 'light');
+    document.getElementById('btn-dark').classList.toggle('active',  t === 'dark');
+  }
+</script>
+</body>
+</html>
