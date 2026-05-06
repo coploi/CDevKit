@@ -520,6 +520,24 @@
     opacity: 0.7;
   }
   .footer-social-btn:hover svg { opacity: 1; }
+  .hl-keyword  { color: #569cd6; }
+  .hl-builtin  { color: #4ec9b0; }
+  .hl-method   { color: #dcdcaa; }
+  .hl-type     { color: #4ec9b0; }
+  .hl-string   { color: #ce9178; }
+  .hl-comment  { color: #6a9955; font-style: italic; }
+  .hl-number   { color: #b5cea8; }
+  .hl-operator { color: #d4d4d4; }
+  .hl-self     { color: #569cd6; }
+
+  [data-theme="light"] .hl-keyword  { color: #0000ff; }
+  [data-theme="light"] .hl-builtin  { color: #267f99; }
+  [data-theme="light"] .hl-method   { color: #795e26; }
+  [data-theme="light"] .hl-type     { color: #267f99; }
+  [data-theme="light"] .hl-string   { color: #a31515; }
+  [data-theme="light"] .hl-comment  { color: #008000; }
+  [data-theme="light"] .hl-number   { color: #098658; }
+  [data-theme="light"] .hl-self     { color: #0000ff; }
 </style>
 </head>
 <body>
@@ -551,6 +569,7 @@
       <div class="sidebar-heading">Docs</div>
       <button class="nav-btn" onclick="navParent(this,'roblox','Roblox','roblox-children')">Roblox</button>
       <div class="nav-sub" id="roblox-children">
+          <button class="nav-btn" onclick="nav(this,'roblox-codespace','Codespace')">Codespace</button>
         <button class="nav-btn" onclick="nav(this,'roblox-datastore','Datastore')">Datastore</button>
         <button class="nav-btn" onclick="nav(this,'roblox-messages','Messages')">Messages</button>
         <button class="nav-btn" onclick="nav(this,'roblox-places','Places')">Places</button>
@@ -621,6 +640,7 @@
           </div>
         </li>
       </ul>
+
             <h2>Requirements</h2>
       <table>
         <thead>
@@ -648,12 +668,15 @@
           </tr>
         </tbody>
       </table>
+
       <div class="notice">If the app fails to launch, make sure you have Python 3.10 or newer installed and added to your system PATH. Dependencies are downloaded automatically on first run.</div>
+
     </div>
 
     <div class="page" id="page-apps">
       <h1>Apps</h1>
       <p class="page-lead">The Apps page lets you enable or disable integrations. Only enabled apps appear in the sidebar, keeping the interface clean and focused on what you actually use.</p>
+
       <h2>Available Integrations</h2>
       <div class="card">
         <div class="app-row">
@@ -716,6 +739,71 @@
     <div class="page" id="page-roblox">
       <h1>Roblox — Api's</h1>
       <p class="page-lead">The Roblox integration gives you direct access to Open Cloud APIs — DataStore, Messaging, Places, and more — without leaving your dev environment.</p>
+    </div>
+
+    <div class="page" id="page-roblox-codespace">
+      <h1>Codespace</h1>
+      <p class="page-lead">Codespace lets you write and manage your Roblox ModuleScripts from within CDevKit. Choose a sync folder, create and edit <code>.luau</code> files, and keep your code in sync with Roblox Studio using the built-in Script Sync feature.</p>
+
+      <h2>How it works</h2>
+      <p>You pick a local folder where your <code>.luau</code> files live. CDevKit reads all the files in that folder and shows them as tabs in the editor. When you create a new file, it's saved as a <strong>ModuleScript</strong> (<code>.luau</code>) in that folder. Edit the code and hit <strong>Save</strong> — the file is written to disk, and Roblox Studio's Script Sync picks up the change automatically.</p>
+
+      <div class="card">
+        <div class="card-title">Sync Folder</div>
+        <p>The local directory CDevKit reads and writes scripts to. Point this at the same folder Studio Script Sync is watching so changes flow between the app and Studio without any manual copying. Click <strong>Browse</strong> to pick a folder, or <strong>Open</strong> to reveal it in your file manager.</p>
+      </div>
+      <div class="card">
+        <div class="card-title">Scripts</div>
+        <p>All <code>.luau</code> files in the sync folder appear as tabs. Click a tab to open it, edit the code, then press <strong>Save</strong>. Use <strong>+ New</strong> to create a new ModuleScript, or <strong>Delete</strong> to remove the currently open file.</p>
+      </div>
+
+      <h2>Setup</h2>
+      <ul class="steps">
+        <li>
+          <div class="step-body">
+            <div class="step-title">Enable Script Sync in Roblox Studio</div>
+            <p>In Studio, go to <strong>File → Beta Features</strong> and enable <strong>Script Sync</strong>. This is Roblox's built-in feature for syncing scripts between Studio and your local filesystem — no third-party plugins required. Full setup guide: <a href="https://create.roblox.com/docs/scripting/sync" target="_blank">create.roblox.com/docs/scripting/sync</a></p>
+          </div>
+        </li>
+        <li>
+          <div class="step-body">
+            <div class="step-title">Link a folder in Studio</div>
+            <p>In the Studio <strong>Explorer</strong>, right-click the folder you want to sync and select <strong>Script Sync → Sync with Directory</strong>. Choose a local directory on your computer and click <strong>Save</strong>. Any <code>.luau</code> files saved to that folder will be reflected as ModuleScripts inside Studio.</p>
+          </div>
+        </li>
+        <li>
+          <div class="step-body">
+            <div class="step-title">Point CDevKit at the same folder</div>
+            <p>On the Codespace page, click <strong>Browse</strong> and select the same folder. CDevKit will immediately list all <code>.luau</code> files found there as editable tabs.</p>
+          </div>
+        </li>
+        <li>
+          <div class="step-body">
+            <div class="step-title">Create and edit scripts</div>
+            <p>Hit <strong>+ New</strong> to create a ModuleScript, give it a name, and start writing. Press <strong>Save</strong> when done — Studio will pick up the change automatically.</p>
+          </div>
+        </li>
+      </ul>
+
+      <h2>Writing Luau — Roblox scripting basics</h2>
+      <p>All files in Codespace are <strong>ModuleScripts</strong>. A ModuleScript must return a value — usually a table of functions or data — so other scripts can <code>require()</code> it. <a href="https://create.roblox.com/docs/reference/engine/classes/ModuleScript" target="_blank">Read the full ModuleScript documentation →</a></p>
+
+      <h3>ModuleScript structure</h3>
+      <pre><code>-- MyModule.luau
+local MyModule = {}
+
+function MyModule.greet(name: string): string
+    return "Hello, " .. name .. "!"
+end
+
+return MyModule</code></pre>
+
+      <h3>Requiring a ModuleScript</h3>
+      <p>From a Script or LocalScript inside Studio, use <code>require()</code> with the instance path to load your module:</p>
+      <pre><code>local MyModule = require(game.ServerScriptService.MyModule)
+print(MyModule.greet("World"))  -- Hello, World!</code></pre>
+
+      <div class="notice">ModuleScripts are shared code — they don't run on their own. They need to be <code>require()</code>d by a Script (server) or LocalScript (client) inside Studio to execute. Always wrap DataStore calls in <code>pcall</code> to handle errors gracefully.</div>
     </div>
 
     <div class="page" id="page-roblox-datastore">
@@ -961,6 +1049,63 @@ print("Something broke", file=sys.stderr)  # → error level</code></pre>
     document.getElementById('btn-light').classList.toggle('active', t === 'light');
     document.getElementById('btn-dark').classList.toggle('active',  t === 'dark');
   }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    function escHtml(s) {
+      return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+
+    function highlight(raw) {
+      const tokens = [];
+      let i = 0;
+
+      function tryMatch(re, type) {
+        re.lastIndex = i;
+        const m = re.exec(raw);
+        if (m && m.index === i) { tokens.push([type, m[0]]); i += m[0].length; return true; }
+        return false;
+      }
+
+      const KEYWORDS = /\b(and|break|do|else|elseif|end|false|for|function|if|in|local|nil|not|or|repeat|return|then|true|until|while|continue|export|type)\b/y;
+      const BUILTINS = /\b(print|require|pairs|ipairs|next|select|tonumber|tostring|unpack|pcall|xpcall|error|assert|rawget|rawset|rawequal|rawlen|setmetatable|getmetatable|math|table|string|game|workspace|script|Instance|Vector3|Vector2|CFrame|Color3|UDim2|UDim|Enum|tick|wait|task|os|coroutine)\b/y;
+      const METHODS  = /\b(GetService|GetAsync|SetAsync|RemoveAsync|IncrementAsync|GetDataStore|GetPlayers|FindFirstChild|FindFirstChildOfClass|WaitForChild|IsA|Clone|Destroy|Connect|Disconnect|Fire|FireServer|FireAllClients|FireClient|InvokeServer|InvokeClient|new)\b/y;
+      const MLCOMMENT = /--\[\[[\s\S]*?\]\]/y;
+      const COMMENT  = /--[^\n]*/y;
+      const MLSTRING = /\[(=*)\[[\s\S]*?\]\1\]/y;
+      const STRING1  = /"(?:[^"\\]|\\.)*"/y;
+      const STRING2  = /'(?:[^'\\]|\\.)*'/y;
+      const NUMBER   = /0[xX][0-9a-fA-F]+|\d+\.?\d*(?:[eE][+-]?\d+)?/y;
+      const TYPE_RE  = /[A-Z][A-Za-z0-9_]*/y;
+      const IDENT    = /[A-Za-z_][A-Za-z0-9_]*/y;
+      const OP       = /\.\.\.|\.\.|[+\-*\/%^#<>=~]=?|[&|~]/y;
+      const OTHER    = /[\s\S]/y;
+
+      while (i < raw.length) {
+        if (tryMatch(MLCOMMENT,'comment')) continue;
+        if (tryMatch(COMMENT,  'comment')) continue;
+        if (tryMatch(MLSTRING, 'string'))  continue;
+        if (tryMatch(STRING1,  'string'))  continue;
+        if (tryMatch(STRING2,  'string'))  continue;
+        if (tryMatch(NUMBER,   'number'))  continue;
+        if (tryMatch(KEYWORDS, 'keyword')) continue;
+        if (tryMatch(BUILTINS, 'builtin')) continue;
+        if (tryMatch(METHODS,  'method'))  continue;
+        if (tryMatch(TYPE_RE,  'type'))    continue;
+        if (tryMatch(IDENT,    'plain'))   continue;
+        if (tryMatch(OP,       'operator'))continue;
+        tryMatch(OTHER, 'plain');
+      }
+
+      return tokens.map(([type, text]) => {
+        const safe = escHtml(text);
+        return type === 'plain' ? safe : '<span class="hl-' + type + '">' + safe + '</span>';
+      }).join('');
+    }
+
+    document.querySelectorAll('pre > code').forEach(el => {
+      el.innerHTML = highlight(el.textContent);
+    });
+  });
 </script>
 </body>
 </html>
